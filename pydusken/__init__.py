@@ -7,10 +7,9 @@ from .members import Members
 
 
 class DuskenApi(object):
-    _base_url = "http://127.0.0.1:8000/api/v1"
-    #base_url = "http://duskendev.neuf.no/api/v1"
-    #base_url = "http://dusken.neuf.no/api/v1"
-    def __init__(self, username, password):
+    def __init__(self, username, password, base_url="http://127.0.0.1:8000/api/v1"):
+        self._base_url = base_url
+
         self._username = username
         self._api_key = self.get_api_key(username, password)
         self.members = Members(username, self._api_key, self._base_url)
