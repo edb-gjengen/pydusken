@@ -6,4 +6,7 @@ setup(
     packages=['pydusken',],
     license='MIT',
     long_description=open('README.md').read(),
+    install_requires=[
+        "requests >= 2.0",
+    ],
 )
