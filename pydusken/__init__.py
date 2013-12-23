@@ -7,20 +7,29 @@ from .members import Members
 
 
 class DuskenApi(object):
-    def __init__(self, username, password, base_url="http://127.0.0.1:8000/api/v1"):
+    def __init__(self, client_id, client_secret, base_url="http://127.0.0.1:8000/api/v1"):
         self._base_url = base_url
+        self._client_id = client_id
+        self._client_secret = client_secret
 
-        self._username = username
-        self._api_key = self.get_api_key(username, password)
-        self.members = Members(username, self._api_key, self._base_url)
+        #self.members = Members(username, self._api_key, self._base_url)
         #self.memberships = Memberships(username, self._apikey, self._base_url)
         #self.groups = Groups(username, self._apikey, self._base_url)
 
-    def set_creds(self, token):
-        # TODO set creds for each type here 
-        pass
+    def authenticate(self, username, password):
+        return self.get_auth_token(username, password, scope='write')
 
-    def get_api_key(self, username, password):
-        resp = requests.post("http://127.0.0.1:8000/authenticate/".format(self._base_url), data=dict(username=username, password=password))
+    def get_auth_token(self, username, password, scope='read'):
+        resp = requests.post(
+            "{}/oauth2/access_token/".format(self._base_url),
+            data=dict(
+                username=username,
+                password=password,
+                client_id = self._client_id,
+                client_secret = self._client_secret,
+                scope=scope,
+                grant_type='password'))
+
         resp.raise_for_status()
-        return json.loads(resp.content).get('api_key')
+
+        return json.loads(resp.content)

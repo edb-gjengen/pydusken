@@ -4,11 +4,6 @@ import requests
 class Members(object):
     __module__ = 'pydusken'
 
-    def __init__(self, username, api_key, base_url):
-        self._username = username
-        self._api_key = api_key
-        self._base_url = base_url
-
     def __request_auth_headers(self):
         return {
             'Authorization': "ApiKey {}:{}".format(self._username, self._api_key)
