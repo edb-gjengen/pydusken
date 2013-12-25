@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from requests.exceptions import HTTPError
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 from . import *
 
@@ -14,21 +16,42 @@ class DuskenBackend(object):
 
         self._api = DuskenApi(client_id=settings.DUSKEN_CLIENT_ID, client_secret=settings.DUSKEN_CLIENT_SECRET)
 
-    def authenticate(self, username=None, password=None):
-        # Check the username/password and return a User.
+    def _is_using_email(self, username):
         try:
-            access_token = self._api.authenticate(username=username, password=password)
+            validate_email(username)
+            return True
+        except ValidationError as e:
+            return False
+
+    def authenticate(self, username=None, password=None):
+        # Check the username/password and return a User. Username can be an email
+        is_using_email = self._is_using_email(username)
+        try:
+            if is_using_email:
+                access_token = self._api.authenticate(email=username, password=password)
+            else:
+                access_token = self._api.authenticate(username=username, password=password)
+
+            if not access_token:
+                return None
+
             try:
-                user = User.objects.get(username=username)
+                if is_using_email:
+                    user = User.objects.get(email=username)
+                else:
+                    user = User.objects.get(username=username)
                 if not user.duskenaccesstoken:
-                    d = DuskenAccessToken(access_token=access_token['access_token'], user=user)
+                    d = DuskenAccessToken(access_token=access_token, user=user)
                     d.save()
                 else:
-                    if user.duskenaccesstoken.access_token != access_token['access_token']:
-                        user.duskenaccesstoken.access_token = access_token=access_token['access_token']
+                    # refresh access_token
+                    if user.duskenaccesstoken.access_token != access_token:
+                        user.duskenaccesstoken.access_token = access_token=access_token
                         user.save()
+                # if local user exist, sync email (for password reset)
             except User.DoesNotExist:
                 # if user does not exist, create a local user
+                # TODO ...with synced data
                 user = User(username=username)
                 user.set_unusable_password()
                 user.save()
@@ -37,10 +60,8 @@ class DuskenBackend(object):
             return user
 
         except HTTPError as e:
+            # Did not authenticate
             pass
-        # TODO
-        # if local user exist, sync email
-        # return user with access_token
         return None
 
     def get_user(self, user_id):
