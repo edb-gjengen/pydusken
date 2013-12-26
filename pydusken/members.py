@@ -41,6 +41,14 @@ class Members(object):
         resp.raise_for_status()
         return json.loads(resp.content)
 
+    def me(self):
+        """
+            Full member with all related data associated to the authenticated user.
+        """
+        resp = self.__GET("{0}/me/".format(self._api.base_url))
+        resp.raise_for_status()
+        return json.loads(resp.content)
+
     def filter(self, username=None, first_name=None, last_name=None, email=None):
         resp = self.__GET("{0}/member/".format(self._api.base_url), params=dict(username=username, first_name=first_name, last_name=last_name, email=email))
         resp.raise_for_status()
