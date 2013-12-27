@@ -6,4 +6,4 @@ class DuskenAccessToken(models.Model):
     user = models.OneToOneField(User)
 
     def __unicode__(self):
-        return u"{} {}".format(self.user, self.access_token)
+        return u"{0} {1}".format(self.user, self.access_token)

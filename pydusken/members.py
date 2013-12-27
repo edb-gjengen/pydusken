@@ -9,7 +9,7 @@ class Members(object):
     
     def __request_auth_headers(self):
         return {
-            'Authorization': "Oauth {}".format(self._api.access_token)
+            'Authorization': "Oauth {0}".format(self._api.access_token)
         }
 
 

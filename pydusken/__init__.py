@@ -31,14 +31,14 @@ class DuskenApi(object):
             self.oauth2_access_token = self.get_access_token(username, password, scope='write')
             self.access_token = self.oauth2_access_token['access_token']
         except requests.exceptions.HTTPError as e:
-            logging.error("Could not authenticate with API. Correct client_id, client_secret, username and password?\n{}".format(e))
+            logging.error("Could not authenticate with API. Correct client_id, client_secret, username and password?\n{0}".format(e))
             return None
 
         return self.access_token
 
     def get_access_token(self, username, password, scope='read', grant_type='password'):
         resp = requests.post(
-            "{}/oauth2/access_token/".format(self.base_url),
+            "{0}/oauth2/access_token/".format(self.base_url),
             data=dict(
                 username=username,
                 password=password,
