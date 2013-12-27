@@ -9,6 +9,9 @@ from . import *
 from models import DuskenAccessToken
 
 class DuskenBackend(object):
+    """
+        Django Authentication Backend
+    """
 
     def __init__(self):
         assert settings.DUSKEN_CLIENT_ID
@@ -22,6 +25,12 @@ class DuskenBackend(object):
             return True
         except ValidationError as e:
             return False
+
+    def _sync_user_detail(self, user):
+        me = self._api.members.me()['objects'][0]
+        attrs = ['email', 'first_name', 'last_name']
+        [setattr(user, attr, me[attr]) for attr in attrs]
+        user.save()
 
     def authenticate(self, username=None, password=None):
         # Check the username/password and return a User. Username can be an email
@@ -48,14 +57,14 @@ class DuskenBackend(object):
                     if user.duskenaccesstoken.access_token != access_token:
                         user.duskenaccesstoken.access_token = access_token=access_token
                         user.save()
-                # if local user exist, sync email (for password reset)
             except User.DoesNotExist:
                 # if user does not exist, create a local user
-                # TODO ...with synced data
                 user = User(username=username)
                 user.set_unusable_password()
                 user.save()
                 DuskenAccessToken.objects.create(access_token=access_token['access_token'], user=user)
+
+            self._sync_user_detail(user)
 
             return user
 

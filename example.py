@@ -19,6 +19,9 @@ client.authenticate(username, password)
 # get member
 pprint.pprint(client.members.get('1'))
 
+# get authenticated user 
+pprint.pprint(client.members.me())
+
 # get member groups
 pprint.pprint(client.members.get_groups('1'))
 
