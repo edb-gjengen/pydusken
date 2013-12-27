@@ -17,7 +17,10 @@ class DuskenBackend(object):
         assert settings.DUSKEN_CLIENT_ID
         assert settings.DUSKEN_CLIENT_SECRET
 
-        self._api = DuskenApi(client_id=settings.DUSKEN_CLIENT_ID, client_secret=settings.DUSKEN_CLIENT_SECRET)
+        if hasattr(settings,'DUSKEN_BASE_URL'):
+            self._api = DuskenApi(client_id=settings.DUSKEN_CLIENT_ID, client_secret=settings.DUSKEN_CLIENT_SECRET, base_url=settings.DUSKEN_BASE_URL)
+        else:
+            self._api = DuskenApi(client_id=settings.DUSKEN_CLIENT_ID, client_secret=settings.DUSKEN_CLIENT_SECRET)
 
     def _is_using_email(self, username):
         try:
