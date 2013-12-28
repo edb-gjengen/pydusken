@@ -52,14 +52,16 @@ class DuskenBackend(object):
                     user = User.objects.get(email=username)
                 else:
                     user = User.objects.get(username=username)
-                if not user.duskenaccesstoken:
-                    d = DuskenAccessToken(access_token=access_token, user=user)
-                    d.save()
-                else:
-                    # refresh access_token
+
+                try:
+                    # Try refreshing access token
                     if user.duskenaccesstoken.access_token != access_token:
                         user.duskenaccesstoken.access_token = access_token=access_token
                         user.save()
+                except:
+                    # ..create if not
+                    d = DuskenAccessToken(access_token=access_token, user=user)
+                    d.save()
             except User.DoesNotExist:
                 # if user does not exist, create a local user
                 user = User(username=username)
