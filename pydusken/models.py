@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class DuskenAccessToken(models.Model):
+    # TODO add refresh_token and expires
     access_token = models.CharField(max_length=255)
     user = models.OneToOneField(User)
 
