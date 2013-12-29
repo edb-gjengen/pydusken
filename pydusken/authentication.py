@@ -36,6 +36,7 @@ class DuskenBackend(object):
         user.save()
 
     def authenticate(self, username=None, password=None):
+        # TODO you are here
         # Check the username/password and return a User. Username can be an email
         is_using_email = self._is_using_email(username)
         try:
