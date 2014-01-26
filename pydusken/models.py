@@ -2,8 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class DuskenAccessToken(models.Model):
-    # TODO add refresh_token and expires
     access_token = models.CharField(max_length=255)
+    refresh_token = models.CharField(max_length=255)
+    expires_in = models.IntegerField()
+    scope = models.CharField(max_length=255)
     user = models.OneToOneField(User)
 
     def __unicode__(self):

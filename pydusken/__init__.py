@@ -28,8 +28,8 @@ class DuskenApi(object):
 
     def authenticate(self, username='', password=''):
         try:
-            self.oauth2_access_token = self.get_access_token(username, password, scope='write')
-            self.access_token = self.oauth2_access_token['access_token']
+            self.oauth2_access_token = self.get_access_token(username, password, scope='read+write')
+            self.access_token = self.oauth2_access_token
         except requests.exceptions.HTTPError as e:
             logging.error("Could not authenticate with API. Correct client_id, client_secret, username and password?\n{0}".format(e))
             return None
