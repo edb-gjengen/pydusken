@@ -33,12 +33,12 @@ class Members(object):
             params['offset'] = offset
 
         resp = self.__GET("{0}/member/".format(self._api.base_url), params=params)
-        resp.raise_for_status()
+        self._api.raise_for_status(resp)
         return json.loads(resp.content)
 
     def get(self, member_id, memberships=None, groups=None):
         resp = self.__GET("{0}/member/{1}/".format(self._api.base_url, member_id), params=dict(memberships=memberships, groups=groups))
-        resp.raise_for_status()
+        self._api.raise_for_status(resp)
         return json.loads(resp.content)
 
     def me(self):
@@ -46,12 +46,12 @@ class Members(object):
             Full member with all related data associated to the authenticated user.
         """
         resp = self.__GET("{0}/me/".format(self._api.base_url))
-        resp.raise_for_status()
+        self._api.raise_for_status(resp)
         return json.loads(resp.content)
 
     def filter(self, username=None, first_name=None, last_name=None, email=None):
         resp = self.__GET("{0}/member/".format(self._api.base_url), params=dict(username=username, first_name=first_name, last_name=last_name, email=email))
-        resp.raise_for_status()
+        self._api.raise_for_status(resp)
         return json.loads(resp.content)
 
     def get_username_from_email(self, email):
@@ -60,12 +60,12 @@ class Members(object):
 
     def get_groups(self, member_id):
         resp = self.__GET("{0}/member/{1}/groups/".format(self._api.base_url, member_id))
-        resp.raise_for_status()
+        self._api.raise_for_status(resp)
         return json.loads(resp.content)
 
     def update(self, member_id, password=None):
         #TODO more attributes 
         resp = self.__PATCH("{0}/member/{1}/".format(self._api.base_url, member_id), data=json.dumps(dict(password=password)), headers={'content-type': 'application/json'})
-        resp.raise_for_status()
+        self._api.raise_for_status(resp)
         # Response body is empty
         return True

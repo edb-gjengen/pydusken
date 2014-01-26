@@ -43,12 +43,17 @@ class DuskenBackend(object):
         return user
 
     def _refresh_access_token(self, user, access_token):
-        print "lol"
-        try:
-            d = DuskenAccessToken(user=user, **access_token)
-            d.save()
-        except Exception as e:
-            print e
+        d = DuskenAccessToken.objects.filter(user=user)
+        if len(d) == 0:
+            d = DuskenAccessToken(user=user)
+        else:
+            d = d[0]
+
+        d.access_token = access_token['access_token']
+        d.expires_in = access_token['expires_in']
+        d.refresh_token = access_token['refresh_token']
+        d.scope = access_token['scope']
+        d.save()
 
     def _sync_user_detail(self, user):
         me = self._api.members.me()['objects'][0]
@@ -69,7 +74,7 @@ class DuskenBackend(object):
         user = self._get_or_create_local_user(username)
 
         self._refresh_access_token(user, access_token)
-        
+
         self._sync_user_detail(user)
 
         return user

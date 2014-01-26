@@ -29,7 +29,7 @@ class DuskenApi(object):
     def authenticate(self, username='', password=''):
         try:
             self.oauth2_access_token = self.get_access_token(username, password, scope='read+write')
-            self.access_token = self.oauth2_access_token
+            self.access_token = self.oauth2_access_token['access_token']
         except requests.exceptions.HTTPError as e:
             logging.error("Could not authenticate with API. Correct client_id, client_secret, username and password?\n{0}".format(e))
             return None
@@ -50,3 +50,21 @@ class DuskenApi(object):
         resp.raise_for_status()
 
         return json.loads(resp.content)
+
+    def raise_for_status(self, resp):
+        """
+            Custom raise_for_status that raises stored :class:`HTTPError` on resp, if one occurred.
+            Prints Error message from Dusken API
+        """
+
+        http_error_msg = ''
+
+        if 400 <= resp.status_code < 500:
+            http_error_msg = '%s Client Error: %s' % (resp.status_code, resp.content)
+
+        elif 500 <= resp.status_code < 600:
+            http_error_msg = '%s Server Error: %s' % (resp.status_code, resp.content)
+
+        if http_error_msg:
+            raise requests.exceptions.HTTPError(http_error_msg, response=resp)
+
