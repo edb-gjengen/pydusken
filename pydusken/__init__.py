@@ -26,7 +26,7 @@ class DuskenApi(object):
     def is_authenticated(self):
         return hasattr(self, 'access_token') and self.access_token
 
-    def authenticate(self, username='', password=''):
+    def authenticate(self, username, password):
         try:
             self.oauth2_access_token = self.get_access_token(username, password, scope='read+write')
             self.access_token = self.oauth2_access_token['access_token']
