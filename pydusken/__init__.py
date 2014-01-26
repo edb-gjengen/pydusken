@@ -60,10 +60,10 @@ class DuskenApi(object):
         http_error_msg = ''
 
         if 400 <= resp.status_code < 500:
-            http_error_msg = '%s Client Error: %s' % (resp.status_code, resp.content)
+            http_error_msg = '%s Client Error: %s %s' % (resp.status_code, resp.reason, resp.content)
 
         elif 500 <= resp.status_code < 600:
-            http_error_msg = '%s Server Error: %s' % (resp.status_code, resp.content)
+            http_error_msg = '%s Server Error: %s %s' % (resp.status_code, resp.reason, resp.content)
 
         if http_error_msg:
             raise requests.exceptions.HTTPError(http_error_msg, response=resp)
