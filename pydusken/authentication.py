@@ -72,9 +72,7 @@ class DuskenBackend(object):
             return None
 
         user = self._get_or_create_local_user(username)
-
         self._refresh_access_token(user, access_token)
-
         self._sync_user_detail(user)
 
         return user

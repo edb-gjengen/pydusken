@@ -34,9 +34,9 @@ class DuskenApi(object):
             logging.error("Could not authenticate with API. Correct client_id, client_secret, username and password?\n{0}".format(e))
             return None
 
-        return self.access_token
+        return self.oauth2_access_token
 
-    def get_access_token(self, username, password, scope='read', grant_type='password'):
+    def get_access_token(self, username, password, scope='read'):
         resp = requests.post(
             "{0}/oauth2/access_token/".format(self.base_url),
             data=dict(
@@ -45,7 +45,7 @@ class DuskenApi(object):
                 client_id = self._client_id,
                 client_secret = self._client_secret,
                 scope=scope,
-                grant_type=grant_type))
+                grant_type='password'))
 
         resp.raise_for_status()
 
